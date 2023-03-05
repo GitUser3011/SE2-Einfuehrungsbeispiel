@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SE2 Einzelbeispiel</string>
+    <string name="gib_deine_matrikelnummer_ein">Gib deine Matrikelnummer ein</string>
+    <string name="abschicken">Abschicken</string>
+</resources>
