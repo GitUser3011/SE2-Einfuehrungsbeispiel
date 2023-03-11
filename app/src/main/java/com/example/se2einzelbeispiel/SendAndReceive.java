@@ -31,21 +31,19 @@ public class SendAndReceive extends AsyncTask<String, Void, Void> {
                 Thread.sleep(2);
             }
             String message=br.readLine();   //+= wenn es mehrere Lines waeren
-            setOutputFromServer(message,"type");
+            setOutputFromServer(message,"key");
             pw.close();
             socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    public void setOutputFromServer(String answer, String type) {
+    public void setOutputFromServer(String answerFromServer, String key) {
         Message message1 = new Message();
         Bundle bundle = new Bundle();
-        bundle.putString(type, answer);
+        bundle.putString(key, answerFromServer);
         message1.setData(bundle);
         handler.sendMessage(message1);
     }

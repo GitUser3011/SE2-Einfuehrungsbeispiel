@@ -2,6 +2,7 @@ package com.example.se2einzelbeispiel;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
     Button send;
     Button calc;
     static Handler handler;
-    int a;
-    int b;
+    int ggt;
 
+
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +34,13 @@ public class MainActivity extends AppCompatActivity {
         calc = findViewById(R.id.calcButton);
 
         //2.2
-        calc.setOnClickListener(v -> {
-            calculateExercise3(String.valueOf(matrikelnummer.getText()));
-        });
+        calc.setOnClickListener(v -> calculateExercise3(String.valueOf(matrikelnummer.getText())));
 
         //2.1 Message vom Server ueber Handler erhalten und ausgeben
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                output.setText(msg.getData().get("type").toString());
+                output.setText(msg.getData().get("key").toString());
             }
         };
     }
@@ -57,25 +57,17 @@ public class MainActivity extends AppCompatActivity {
     // - die Ziffer wird auf sich selbst nicht als ggt gesehen (bei anderen indexes jedoch schon)
     // - Doppelnennungen werden herausgestrichen
     // - Index startet bei 0
-    void calculateExercise3(String matrikelnummer1){
+    void calculateExercise3(String matrikelnummerString){
         List<String> list = new ArrayList<>();
-        int[] matrikelnummerIntArr = new int[matrikelnummer.length()];
-        for (int i = 0; i < matrikelnummer.length(); i++) {
-            matrikelnummerIntArr[i] = matrikelnummer1.charAt(i) - '0';
+        int[] matrikelnummerArray = new int[matrikelnummerString.length()];
+        for (int i = 0; i < matrikelnummerString.length(); i++) {
+            matrikelnummerArray[i] = matrikelnummerString.charAt(i) - '0';
         }
-        for (int i = 0; i < matrikelnummerIntArr.length; i++) {
-            for (int j = 0; j < matrikelnummerIntArr.length; j++) {
-                if(matrikelnummerIntArr[i] > 1 && matrikelnummerIntArr[j] > 1) {
-                    a = matrikelnummerIntArr[i];
-                    b = matrikelnummerIntArr[j];
-                    while (a != 0 && b != 0) {
-                        if (a > b) {
-                            a = a - b;
-                        } else {
-                            b = b - a;
-                        }
-                    }
-                    if (a > 1 && i != j && !(list.contains("(" + j + ", " + i + ")"))) {
+        for (int i = 0; i < matrikelnummerArray.length; i++) {
+            for (int j = i+1; j < matrikelnummerArray.length; j++) {
+                if(matrikelnummerArray[i] > 1 && matrikelnummerArray[j] > 1) {
+                    ggt=calcggt(matrikelnummerArray[i], matrikelnummerArray[j]);
+                    if (ggt > 1) {
                         list.add("(" + i + ", " + j + ")");
                     }
                 }
@@ -88,6 +80,17 @@ public class MainActivity extends AppCompatActivity {
         }else{
             output.setText("");
         }
+    }
+
+    public int calcggt(int a, int b){
+        while (a != 0 && b != 0) {
+            if (a > b) {
+                a = a - b;
+            } else {
+                b = b - a;
+            }
+        }
+        return a;
     }
 
 
